@@ -118,6 +118,7 @@ struct ResultEntryView: View {
         hip.price = outcome == "out" ? nil : price
         hip.buyer = outcome == "sold" && !buyer.isEmpty ? buyer : nil
         hip.resultAt = .now
+        hip.resultSource = "manual"
         hip.needsSync = true
         dismiss()
     }

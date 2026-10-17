@@ -1,29 +1,28 @@
 import Foundation
 import PDFKit
 
-/// Works out which catalog page each hip is on by reading the page text.
+/// Works out which catalog page each hip is on.
 ///
-/// Keeneland, Fasig-Tipton and OBS pages print the hip number near the top
-/// ("Hip No. 123"). The pattern needs checking against each company's real
-/// PDF; pages it misses can be assigned by hand from the Catalog screen.
+/// Keeneland pages print a "Hip No." label with the number directly below
+/// it; the label moves between the left and right side on facing pages. So
+/// find every label and read the number in the strip just under it.
+/// Supplementary hips ("224A") are skipped until hips can carry a letter.
 enum CatalogPDFIndexer {
-    private static let hipPattern = try! NSRegularExpression(
-        pattern: #"\bHip\s*(?:No\.?|Number)?\s*(\d{1,4})\b"#,
-        options: [.caseInsensitive]
-    )
-
     /// Hip number → page index. The first page a hip appears on wins.
     static func hipPages(at url: URL) -> [Int: Int] {
         guard let document = PDFDocument(url: url) else { return [:] }
         var map: [Int: Int] = [:]
-        for index in 0..<document.pageCount {
-            guard let text = document.page(at: index)?.string else { continue }
-            let range = NSRange(text.startIndex..., in: text)
-            for match in hipPattern.matches(in: text, range: range) {
-                guard let numberRange = Range(match.range(at: 1), in: text),
-                      let hip = Int(text[numberRange]) else { continue }
-                if map[hip] == nil { map[hip] = index }
-            }
+        for label in document.findString("Hip No.", withOptions: .caseInsensitive) {
+            guard let page = label.pages.first else { continue }
+            let bounds = label.bounds(for: page)
+            // PDF space has its origin at the bottom left, so "below" is a smaller y.
+            let strip = CGRect(x: bounds.minX - 12, y: bounds.minY - 22,
+                               width: bounds.width + 48, height: 20)
+            guard let text = page.selection(for: strip)?.string,
+                  let match = text.range(of: #"\b\d{1,4}\b"#, options: .regularExpression),
+                  let hip = Int(text[match]) else { continue }
+            let index = document.index(for: page)
+            if map[hip] == nil { map[hip] = index }
         }
         return map
     }

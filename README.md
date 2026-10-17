@@ -32,16 +32,26 @@ If the build fails, copy the full error list from Xcode's Issue navigator (⌘5)
 | Results and ring board | Results typed in by hand; session median, RNA count and gross |
 | Photos and video | Camera or photo library, kept with the hip |
 
-Sample data: Keeneland November 2026, hips 1–14, from the Timbercreek Bloodstock database. The full book will come from the shared server.
+| Team sync | Short-list, bid ceilings, ratings, notes, ink, photos and results shared through the team server (`server/README.md`) |
+
+The full Keeneland November 2026 book is built in: all 3,398 hips with catalog facts, agent score and tier, sire figures and price bands, the covering sire's weanling prices, and the dam's foals at auction, from the Timbercreek Bloodstock database (export checked hip by hip against the database's MD5).
+
+## Catalog pipeline (`pipeline/`)
+
+| Script | What it does |
+| --- | --- |
+| `export_hips.sql` | The database query behind the built-in book |
+| `parse_catalog.py` | Reads a catalog PDF's fonts: stakes winners and placed under each dam, the dam's produce record, sire figures, race record, pregnancy. Tested on the 2021 Keeneland November catalog (3,866 of 3,866 hips found) |
+| `build_sale.py` | Merges the two into the file the app loads: `python3 build_sale.py kee_nov_2026 out.json --pdf parsed.json` |
 
 ## Not built yet
 
-- Shared server: team sync, the Timbercreek data feed, and the live Keeneland results reader.
-- Black-type counts read from the PDF fonts.
-- Fasig-Tipton and OBS results readers, Android.
+- Black-type counts for the 2026 book: needs the 2026 catalog PDF run through `parse_catalog.py`.
+- The live Keeneland results reader (needs network access to keeneland.com).
+- Fasig-Tipton and OBS readers, Android.
 
 ## Notes for whoever builds next
 
-- The PDF page matcher (`CatalogPDFIndexer`) looks for "Hip No. 123" in each page's text. Check it against the real Keeneland November PDF; the import shows how many hips it matched.
+- The iPad's PDF page matcher (`CatalogPDFIndexer`) finds each "Hip No." label and reads the number printed under it. The import shows how many hips it matched.
 - The data format the server must serve is `SaleFile` / `HipRecord` in `Data/SaleImporter.swift`.
 - Every model has a `needsSync` flag, so the sync layer can upload only what changed.

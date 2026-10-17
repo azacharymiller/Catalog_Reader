@@ -68,10 +68,12 @@ struct HipTableView: View {
                         .monospacedDigit()
                 }
                 .width(min: 140, ideal: 180)
-                TableColumn("Family", value: \.sortFamily) { hip in
-                    Text(hip.femaleLineScore.map { String(format: "%.1f", $0) } ?? "–")
+                TableColumn("Black type", value: \.sortBlackType) { hip in
+                    Text(hip.blackTypeText)
+                        .fontWeight((hip.familyStakesWinners ?? 0) > 0 ? .semibold : .regular)
                         .monospacedDigit()
                 }
+                .width(min: 120, ideal: 150)
                 TableColumn("Dam's foals sold", value: \.sortProduceMedian) { hip in
                     Text(hip.produceText).monospacedDigit()
                 }

@@ -81,6 +81,15 @@ struct CompareRow {
                    text: { $0.sireGradedWinners.map(String.init) ?? "–" }, higherIsBetter: true),
         CompareRow(title: "Sire fee", text: { $0.sireFee?.shortDollars ?? "–" }),
         CompareRow(title: "Sire price band", text: \.bandText),
+        CompareRow(title: "Black type under 1st dam", value: { $0.sortBlackType >= 0 ? Double($0.sortBlackType) : nil },
+                   text: \.blackTypeText, higherIsBetter: true),
+        CompareRow(title: "Dam's foals: SW / SP", text: { h in
+            guard let w = h.damStakesWinners, let p = h.damStakesPlaced else { return "–" }
+            return "\(w) / \(p)"
+        }),
+        CompareRow(title: "2nd dam stakes winners", value: { $0.secondDamStakesWinners.map(Double.init) },
+                   text: { $0.secondDamStakesWinners.map(String.init) ?? "–" }, higherIsBetter: true),
+        CompareRow(title: "Covering sire's weanlings", text: \.coverBandText),
         CompareRow(title: "Family score", value: \.femaleLineScore,
                    text: { $0.femaleLineScore.map { String(format: "%.1f", $0) } ?? "–" }, higherIsBetter: true),
         CompareRow(title: "Dam's foals sold", value: \.produceMedian, text: \.produceText, higherIsBetter: true),

@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 
 /// The hip data format. The shared server will serve this; for now it is
-/// bundled (SampleSale.json) or imported from a file.
+/// bundled (KeenelandNovember2026.json) or imported from a file.
 struct SaleFile: Codable {
     var saleId: String
     var name: String
@@ -44,6 +44,24 @@ struct HipRecord: Codable {
     var damStakesWinners: Int?
     var damStakesPlaced: Int?
     var secondDamStakesWinners: Int?
+    var thirdDamStakesWinners: Int?
+    var familyStakesWinners: Int?
+    var familyStakesPlaced: Int?
+    var familyGraded: Int?
+    var familyG1: Int?
+    var damBlackType: String?
+    var sireCrops: Int?
+    var sireFoals: Int?
+    var sireStarters: Int?
+    var sireBlackTypeWinners: Int?
+    var sireWinners: Int?
+    var coverBandMedian: Double?
+    var coverBandCount: Int?
+    var earned: Double?
+    var ownProduceStakesWinners: Int?
+    var ownProduceStakesPlaced: Int?
+    var pregnant: Bool?
+    var pdfPageIndex: Int?
 }
 
 @MainActor
@@ -51,7 +69,7 @@ enum SaleImporter {
     static func loadSampleIfNeeded(into context: ModelContext) {
         let count = (try? context.fetchCount(FetchDescriptor<Sale>())) ?? 0
         guard count == 0,
-              let url = Bundle.main.url(forResource: "SampleSale", withExtension: "json"),
+              let url = Bundle.main.url(forResource: "KeenelandNovember2026", withExtension: "json"),
               let data = try? Data(contentsOf: url) else { return }
         try? importSale(data, into: context)
     }
@@ -123,5 +141,24 @@ enum SaleImporter {
         hip.damStakesWinners = r.damStakesWinners
         hip.damStakesPlaced = r.damStakesPlaced
         hip.secondDamStakesWinners = r.secondDamStakesWinners
+        hip.thirdDamStakesWinners = r.thirdDamStakesWinners
+        hip.familyStakesWinners = r.familyStakesWinners
+        hip.familyStakesPlaced = r.familyStakesPlaced
+        hip.familyGraded = r.familyGraded
+        hip.familyG1 = r.familyG1
+        hip.damBlackType = r.damBlackType
+        hip.sireCrops = r.sireCrops
+        hip.sireFoals = r.sireFoals
+        hip.sireStarters = r.sireStarters
+        hip.sireBlackTypeWinners = r.sireBlackTypeWinners
+        hip.sireWinners = r.sireWinners
+        hip.coverBandMedian = r.coverBandMedian
+        hip.coverBandCount = r.coverBandCount
+        hip.earned = r.earned
+        hip.ownProduceStakesWinners = r.ownProduceStakesWinners
+        hip.ownProduceStakesPlaced = r.ownProduceStakesPlaced
+        hip.pregnant = r.pregnant
+        // A page found by the catalog parser; an iPad PDF import can still override it.
+        if let page = r.pdfPageIndex { hip.pdfPageIndex = page }
     }
 }

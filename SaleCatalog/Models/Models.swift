@@ -58,18 +58,44 @@ final class Hip {
     var damStakesWinners: Int?
     var damStakesPlaced: Int?
     var secondDamStakesWinners: Int?
+    var thirdDamStakesWinners: Int?
+    /// Black type anywhere under the first dam (produce, grand-produce, siblings).
+    var familyStakesWinners: Int?
+    var familyStakesPlaced: Int?
+    /// Stakes winners whose entry names a graded race (the race may be a placing).
+    var familyGraded: Int?
+    var familyG1: Int?
+    /// "winner" or "placed" when the dam herself earned black type.
+    var damBlackType: String?
+    var sireCrops: Int?
+    var sireFoals: Int?
+    var sireStarters: Int?
+    var sireBlackTypeWinners: Int?
+    var sireWinners: Int?
+    var coverBandMedian: Double?
+    var coverBandCount: Int?
+    // Mares: her own race and produce record
+    var earned: Double?
+    var ownProduceStakesWinners: Int?
+    var ownProduceStakesPlaced: Int?
+    var pregnant: Bool?
 
     // Team marks
     var isFavorite: Bool = false
     var isShortlisted: Bool = false
     var rating: Int = 0
     var bidCeiling: Double?
+    /// From the rest of the team, filled in by sync.
+    var teamFavoriteCount: Int = 0
+    var teamRatingAverage: Double?
 
     // Sale result: "sold", "rna" or "out" (withdrawn)
     var result: String?
     var price: Double?
     var buyer: String?
     var resultAt: Date?
+    /// "feed" from the results reader, "manual" when typed in.
+    var resultSource: String?
 
     var needsSync: Bool = false
     var sale: Sale?
@@ -96,6 +122,8 @@ final class HipNote {
     var recognizedText: String
     var correctedText: String?
     var needsSync: Bool
+    /// File name in storage once uploaded.
+    var drawingPath: String?
     var hip: Hip?
 
     init(author: String, location: String) {

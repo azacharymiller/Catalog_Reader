@@ -61,6 +61,13 @@ struct HipDetailView: View {
                 .toggleStyle(.button)
                 .tint(.yellow)
             RatingView(rating: Binding(get: { hip.rating }, set: { hip.rating = $0; hip.needsSync = true }))
+            if hip.teamFavoriteCount > 0 || hip.teamRatingAverage != nil {
+                Text([hip.teamFavoriteCount > 0 ? "\(hip.teamFavoriteCount) team favorites" : nil,
+                      hip.teamRatingAverage.map { String(format: "team rating %.1f", $0) }]
+                    .compactMap { $0 }.joined(separator: " · "))
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+            }
             Spacer()
             HStack {
                 Text("Bid ceiling").foregroundStyle(.secondary)
@@ -133,11 +140,29 @@ struct StatGrid: View {
                      detail: "Female line, from the agent score")
             StatTile(title: "Dam's foals at auction", value: hip.produceMedian?.shortDollars ?? "–",
                      detail: hip.produceText)
+            StatTile(title: "Black type under 1st dam", value: hip.blackTypeText,
+                     detail: blackTypeDetail)
             if let produce = damProduceLine {
-                StatTile(title: "Dam's produce record", value: produce, detail: "foals · runners · winners · SW")
+                StatTile(title: "Dam's produce record", value: produce, detail: "foals · to race · winners · SW")
+            }
+            if hip.secondDamStakesWinners != nil || hip.thirdDamStakesWinners != nil {
+                StatTile(title: "Deeper family",
+                         value: "\(hip.secondDamStakesWinners.map(String.init) ?? "–") / \(hip.thirdDamStakesWinners.map(String.init) ?? "–")",
+                         detail: "Stakes winners under 2nd / 3rd dam")
+            }
+            if let btw = hip.sireBlackTypeWinners {
+                StatTile(title: "Sire's record (catalog)", value: "\(btw) SW",
+                         detail: [hip.sireCrops.map { "\($0) crops" }, hip.sireStarters.map { "\($0) starters" },
+                                  hip.sireWinners.map { "\($0) winners" }].compactMap { $0 }.joined(separator: " · "))
             }
             if let coveringSire = hip.coveringSire {
-                StatTile(title: "In foal to", value: coveringSire, detail: "")
+                StatTile(title: hip.pregnant == false ? "Mated to" : "In foal to", value: coveringSire,
+                         detail: "His weanlings: \(hip.coverBandText)")
+            }
+            if hip.earned != nil || hip.ownProduceStakesWinners != nil {
+                StatTile(title: "Her own record",
+                         value: hip.earned?.shortDollars ?? "–",
+                         detail: "Earned · her foals: \(hip.ownProduceStakesWinners ?? 0) SW, \(hip.ownProduceStakesPlaced ?? 0) SP")
             }
         }
     }
@@ -147,6 +172,19 @@ struct StatGrid: View {
         let year = hip.bandYear.map { " in \($0)" } ?? ""
         if !hip.bandIsReliable { return "Too few sales (\(count))\(year)" }
         return "\(hip.bandQ1?.shortDollars ?? "?")–\(hip.bandQ3?.shortDollars ?? "?") middle half, \(count) sold\(year)"
+    }
+
+    private var blackTypeDetail: String {
+        var parts: [String] = []
+        switch hip.damBlackType {
+        case "winner": parts.append("Dam is a stakes winner")
+        case "placed": parts.append("Dam is stakes-placed")
+        default: break
+        }
+        if let winners = hip.damStakesWinners, let placed = hip.damStakesPlaced {
+            parts.append("her foals: \(winners) SW, \(placed) SP")
+        }
+        return parts.isEmpty ? "Read from the catalog page" : parts.joined(separator: " · ")
     }
 
     private var damProduceLine: String? {

@@ -48,6 +48,6 @@ struct RingBoardView: View {
         .font(.callout)
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
-        .background(alert ? AnyShapeStyle(Color.green.opacity(0.18)) : AnyShapeStyle(Material.bar))
+        .background(alert ? Color.green.opacity(0.18) : .clear)
     }
 }
