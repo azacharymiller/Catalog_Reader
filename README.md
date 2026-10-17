@@ -31,7 +31,6 @@ If the build fails, copy the full error list from Xcode's Issue navigator (⌘5)
 | Compare | Short-listed hips side by side, best value in each row highlighted |
 | Results and ring board | Results typed in by hand; session median, RNA count and gross |
 | Photos and video | Camera or photo library, kept with the hip |
-
 | Team sync | Short-list, bid ceilings, ratings, notes, ink, photos and results shared through the team server (`server/README.md`) |
 
 The full Keeneland November 2026 book is built in: all 3,398 hips with catalog facts, agent score and tier, sire figures and price bands, the covering sire's weanling prices, and the dam's foals at auction, from the Timbercreek Bloodstock database (export checked hip by hip against the database's MD5).
