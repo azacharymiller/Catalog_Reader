@@ -173,7 +173,10 @@ def dam_section(lines):
     lines = ([head] if head else []) + lines[1:]
     if not lines:
         return out
-    # The dam's own name opens the section: bold only if she earned black type.
+    # The dam's name opens the section, up to ", by" (kept for cross-checks).
+    name = re.split(r"\s*,\s*by\b", text_of([lines[0]]))[0]
+    out["name"] = re.sub(r"\s+", " ", name).strip()
+    # Her name is bold only if she earned black type.
     horses = black_type(lines)
     own = lines[0][0]
     out["dam_black_type"] = None
@@ -191,12 +194,15 @@ def dam_section(lines):
 
 def sire_section(lines):
     text = text_of(lines)
+    # Figures after "Son of ..." belong to the sire's sire, and "Sire of dams
+    # of ..." counts his daughters' foals; keep only the sire's own record.
+    own = re.split(r"\bSon of\b|\bSire of dams of\b", text)[0]
     out = {}
     for key, pattern in SIRE_STATS.items():
-        m = pattern.search(text)
+        m = pattern.search(own)
         if m:
             out[key] = int(m.group(1))
-    if re.search(r"first foals are (?:weanlings|yearlings|two-year-olds)", text, re.IGNORECASE):
+    if re.search(r"first foals are (?:weanlings|yearlings|two-year-olds|2-?\s?year-?\s?olds)", text, re.IGNORECASE):
         out["first_crop"] = True
     return out
 

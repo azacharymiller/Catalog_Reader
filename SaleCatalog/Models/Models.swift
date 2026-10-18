@@ -72,6 +72,8 @@ final class Hip {
     var sireStarters: Int?
     var sireBlackTypeWinners: Int?
     var sireWinners: Int?
+    /// The sire's first foals are not yet racing age, so he has no figures.
+    var sireFirstCrop: Bool = false
     var coverBandMedian: Double?
     var coverBandCount: Int?
     // Mares: her own race and produce record

@@ -11,6 +11,7 @@ and the page each hip is on.
 import glob
 import json
 import os
+import re
 import sys
 
 COLUMNS = [
@@ -52,6 +53,11 @@ def read_export(folder):
     return hips
 
 
+def name_key(name):
+    """Upper case, letters and digits only, so 'Always At Ease' matches 'ALWAYS AT EASE'."""
+    return re.sub(r"[^A-Z0-9]", "", (name or "").upper())
+
+
 def add_page_numbers(record, page):
     """Copy the parsed page's counts onto the hip record."""
     record["pdfPageIndex"] = page["page_index"]
@@ -60,6 +66,8 @@ def add_page_numbers(record, page):
                      ("black_type_winners", "sireBlackTypeWinners"), ("winners", "sireWinners")):
         if src in sire:
             record[dst] = sire[src]
+    if sire.get("first_crop"):
+        record["sireFirstCrop"] = True
     dam1 = page.get("dam1")
     if dam1:
         for src, dst in (("foals", "damFoals"), ("to_race", "damRunners"), ("winners", "damWinners")):
@@ -91,10 +99,20 @@ def main():
     if "--pdf" in sys.argv:
         with open(sys.argv[sys.argv.index("--pdf") + 1]) as f:
             pages = {p["hip"]: p for p in json.load(f)["hips"]}
+        mismatched = []
         for number, record in hips.items():
-            if number in pages:
-                add_page_numbers(record, pages[number])
-                matched += 1
+            page = pages.get(number)
+            if page is None:
+                continue
+            # Only trust a page whose dam is this hip's dam.
+            if name_key(page.get("dam1", {}).get("name")) != name_key(record["dam"]):
+                mismatched.append((number, record["dam"], page.get("dam1", {}).get("name")))
+                continue
+            add_page_numbers(record, page)
+            matched += 1
+        missing = sorted(set(hips) - set(pages))
+        print(f"{len(mismatched)} dam-name mismatches (page data not used): {mismatched[:10]}")
+        print(f"{len(missing)} hips with no page: {missing[:20]}")
     sale = {
         "saleId": "KEE_FILE_133",
         "name": "Keeneland November 2026",

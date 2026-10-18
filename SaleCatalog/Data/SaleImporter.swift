@@ -55,6 +55,7 @@ struct HipRecord: Codable {
     var sireStarters: Int?
     var sireBlackTypeWinners: Int?
     var sireWinners: Int?
+    var sireFirstCrop: Bool?
     var coverBandMedian: Double?
     var coverBandCount: Int?
     var earned: Double?
@@ -152,6 +153,7 @@ enum SaleImporter {
         hip.sireStarters = r.sireStarters
         hip.sireBlackTypeWinners = r.sireBlackTypeWinners
         hip.sireWinners = r.sireWinners
+        hip.sireFirstCrop = r.sireFirstCrop ?? false
         hip.coverBandMedian = r.coverBandMedian
         hip.coverBandCount = r.coverBandCount
         hip.earned = r.earned

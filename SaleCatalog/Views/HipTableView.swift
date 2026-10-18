@@ -59,7 +59,9 @@ struct HipTableView: View {
                 }
                 .width(min: 80, ideal: 90)
                 TableColumn("Sire SW%", value: \.sortSireSW) { hip in
-                    Text(hip.sirePctStakesWinners.map { String(format: "%.1f%%", $0) } ?? "–")
+                    Text(hip.sirePctStakesWinners.map { String(format: "%.1f%%", $0) }
+                         ?? (hip.sireFirstCrop ? "first crop" : "–"))
+                        .foregroundStyle(hip.sirePctStakesWinners == nil ? .secondary : .primary)
                         .monospacedDigit()
                 }
                 TableColumn("Sire band", value: \.sortBandMedian) { hip in
