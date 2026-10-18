@@ -33,7 +33,7 @@ If the build fails, copy the full error list from Xcode's Issue navigator (⌘5)
 | Photos and video | Camera or photo library, kept with the hip |
 | Team sync | Short-list, bid ceilings, ratings, notes, ink, photos and results shared through the team server (`server/README.md`) |
 
-The full Keeneland November 2026 book is built in: all 3,398 hips with catalog facts, agent score and tier, sire figures and price bands, the covering sire's weanling prices, and the dam's foals at auction, from the Timbercreek Bloodstock database (export checked hip by hip against the database's MD5).
+The full Keeneland November 2026 book is built in: all 3,398 hips with catalog facts, agent score and tier, sire figures and price bands, the covering sire's weanling prices, and the dam's foals at auction, from the Timbercreek Bloodstock database (export checked hip by hip against the database's MD5). Black type, produce records, sire figures and catalog pages come from the 2026 catalog PDF for 3,394 hips; a page is only used when its dam matches the database. Hips 1730, 2247 and 2301 (no first-dam section on the page) and 265 (not in the PDF) have database numbers only.
 
 ## Catalog pipeline (`pipeline/`)
 
@@ -45,7 +45,6 @@ The full Keeneland November 2026 book is built in: all 3,398 hips with catalog f
 
 ## Not built yet
 
-- Black-type counts for the 2026 book: needs the 2026 catalog PDF run through `parse_catalog.py`.
 - The live Keeneland results reader (needs network access to keeneland.com).
 - Fasig-Tipton and OBS readers, Android.
 

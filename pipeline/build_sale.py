@@ -54,8 +54,10 @@ def read_export(folder):
 
 
 def name_key(name):
-    """Upper case, letters and digits only, so 'Always At Ease' matches 'ALWAYS AT EASE'."""
-    return re.sub(r"[^A-Z0-9]", "", (name or "").upper())
+    """Upper case, letters and digits only, country suffix dropped, so
+    'Always At Ease' matches 'ALWAYS AT EASE' and 'PARLANCE' matches 'PARLANCE (IRE)'."""
+    name = re.sub(r"\s*\([A-Z]{2,3}\)\s*$", "", (name or "").upper())
+    return re.sub(r"[^A-Z0-9]", "", name)
 
 
 def add_page_numbers(record, page):
@@ -111,7 +113,7 @@ def main():
             add_page_numbers(record, page)
             matched += 1
         missing = sorted(set(hips) - set(pages))
-        print(f"{len(mismatched)} dam-name mismatches (page data not used): {mismatched[:10]}")
+        print(f"{len(mismatched)} dam-name mismatches (page data not used): {mismatched}")
         print(f"{len(missing)} hips with no page: {missing[:20]}")
     sale = {
         "saleId": "KEE_FILE_133",
